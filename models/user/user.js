@@ -1,8 +1,3 @@
-// 아이디 : 이메일 형식
-// 비밀번호
-// 어떤 로그인인지?
-// 잔고
-
 const Sequelize = require('sequelize');
 
 class User extends Sequelize.Model{
@@ -10,10 +5,9 @@ class User extends Sequelize.Model{
     User.init({
       // 사용자 고유 아이디
       id: {
-        type: Sequelize.STRING,
-        allowNull: false,
+        type: Sequelize.INTEGER,
         primaryKey: true,
-        unique: true
+        autoIncrement: true,
       },
       // 사용자 이름 ( 본명 )
       name: {
@@ -31,21 +25,17 @@ class User extends Sequelize.Model{
         type: Sequelize.STRING,
         allowNull: false
       },
-      phone: {
-        type: Sequelize.INTEGER,
+      // 잔고, 가입 시 기본 투자금 1억 지급
+      balance : {
+        type: Sequelize.BIGINT,
+        allowNull: false,
+        defaultValue: 100000000
       },
-      point:{
-        type: Sequelize.INTEGER,
+      // 보유 코인
+      coin: {
+        type: Sequelize.JSON,
         allowNull: true,
       },
-      snsId: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      provider: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      }
     },
     {
       sequelize,

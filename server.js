@@ -1,7 +1,6 @@
 const express = require('express');
 const cors =require('cors')
 const nunjucks = require('nunjucks');
-const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const path = require('path');
@@ -9,6 +8,11 @@ const http = require('http');
 const jwt = require("jsonwebtoken");
 const {v4: uuidv4} = require('uuid');
 const socketIo = require("socket.io");
+
+const { sequelize } = require('./models');
+
+const indexRouter = require('./routes')
+const userRouter = require('./routes/user.js');
 
 const app = express();
 // const server = http.createServer(app);
@@ -57,6 +61,9 @@ app.use(cookieSession({
   },
 })
 );
+
+app.use('/', indexRouter);
+app.use('/user', userRouter);
 
 app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기 중');
