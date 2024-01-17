@@ -3,6 +3,8 @@ const cors =require('cors')
 const nunjucks = require('nunjucks');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const {sequelize} = require('./models');
+require("dotenv").config({ path: "./.env" });
 const path = require('path');
 const http = require('http');
 const jwt = require("jsonwebtoken");
@@ -13,11 +15,26 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+const indexRouter = require('./routes/index');
+
+const htmlRouter = require('./routes/html.js');
+const htmlreviewRouter = require('./routes/htmlreview.js');
+
+
 const payload = {
     access_key: "JkpxthVIGy0EtmtyU00axkI8MKVsyvoxdTJ4hDn4", 
     nonce: uuidv4(),
 };
 
+
+// force 에 true가 들어가면 테이블을 재생성함
+sequelize.sync({ force: false })
+  .then(() => {
+    console.log('데이터베이스 연결 성공');
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
 // const io = socketIo('wss://api.upbit.com/websocket/v1');
 app.set('port', process.env.PORT || 3001);
@@ -35,8 +52,8 @@ app.use(cors({
   origin: true,
   credentials: true
 }));
-app.use(express.cookieParser(process.env.COOKIE_SECRET));
-app.use(express.cookieSession({
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(session({
   resave: false,
   saveUnitialized: false,
   secret: process.env.COOKIE_SECRET,
@@ -90,6 +107,11 @@ io.on('connenction', (socket) => {
     console.log('Disconnected !');
   });
 })
+
+app.use('/', indexRouter);
+
+app.use('/html', htmlRouter);
+app.use('/htmlreview', htmlreviewRouter);
 
 app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기 중');
