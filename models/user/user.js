@@ -38,7 +38,7 @@ class User extends Sequelize.Model{
         unique: true
       },
       // 어떤 방법으로 회원가입 했는지 ( normal, google, kakao ... )
-      mehod: {
+      method: {
         type: Sequelize.STRING,
         allowNull: false,
       },
