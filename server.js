@@ -1,7 +1,10 @@
 const express = require('express');
 const cors =require('cors')
 const nunjucks = require('nunjucks');
+const session = require('express-session');
 const cookieParser = require('cookie-parser');
+// const cookieSession = require('cookie-session');
+const passport = require('passport');
 const {sequelize} = require('./models');
 require("dotenv").config({ path: "./.env" });
 const session = require('express-session');
@@ -14,14 +17,15 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+const passportConfig = require('./passport');
 const { sequelize } = require('./models');
-
 const indexRouter = require('./routes')
 const userRouter = require('./routes/user.js');
 const authRouter = require('./routes/auth.js');
 const testRouter = require('./routes/test.js');
 
 const app = express();
+passportConfig();
 // const server = http.createServer(app);
 // const io = socketIo(server);
 
@@ -71,17 +75,20 @@ app.use(cors({
   origin: true,
   credentials: true
 }));
+
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
   resave: false,
-  saveUnitialized: false,
+  saveUninitialized: false,
   secret: process.env.COOKIE_SECRET,
   cookie: {
     httpOnly: true,
     secure: false,
   },
-})
-);
+}))
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/user', userRouter);
