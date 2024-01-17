@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize');
 
-// const User = require('./user/index');
-const User = require('./user/index');
+const User = require('./user/user');
 const Html = require('./html');
 const Htmlreview = require('./htmlreview');
 // const Image = require('./image');
@@ -30,6 +29,10 @@ Html.associate(db);
 Htmlreview.associate(db);
 
 // User.associate(db); //FK
+
+db.User = User;
+
+User.initiate(sequelize);
 
 
 module.exports = db;

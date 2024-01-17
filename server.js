@@ -1,19 +1,29 @@
 const express = require('express');
 const cors =require('cors')
 const nunjucks = require('nunjucks');
-const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const {sequelize} = require('./models');
 require("dotenv").config({ path: "./.env" });
+const session = require('express-session');
 const path = require('path');
 const http = require('http');
 const jwt = require("jsonwebtoken");
 const {v4: uuidv4} = require('uuid');
 const socketIo = require("socket.io");
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const { sequelize } = require('./models');
+
+const indexRouter = require('./routes')
+const userRouter = require('./routes/user.js');
+const authRouter = require('./routes/auth.js');
+const testRouter = require('./routes/test.js');
 
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
+// const server = http.createServer(app);
+// const io = socketIo(server);
 
 const indexRouter = require('./routes/index');
 
@@ -25,6 +35,15 @@ const payload = {
     access_key: "JkpxthVIGy0EtmtyU00axkI8MKVsyvoxdTJ4hDn4", 
     nonce: uuidv4(),
 };
+
+// force 에 true가 들어가면 테이블을 재생성함
+sequelize.sync({ force: false })
+  .then(() => {
+    console.log('데이터베이스 연결 성공');
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
 
 // force 에 true가 들어가면 테이블을 재생성함
@@ -63,50 +82,11 @@ app.use(session({
   },
 })
 );
-// app.use(express.session())
 
-// Upbit API 엔드포인트 및 키
-const UPBIT_API_URL = 'https://api.upbit.com/v1/ticker';
-const UPBIT_API_KEY = 'IQsvYFnvjMCXsa5l3J7Ijk7QGhEwXeHMhdlqpAM5';
-
-// Upbit API 호출 함수
-const getCoinData = async (symbols) => {
-  try {
-    const response = await axios.get(UPBIT_API_URL, {
-      params: { markets: symbols.join(','), isDetails: false },
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching coin data:', error);
-    throw error;
-  }
-};
-
-const jwtToken = jwt.sign(payload, "IQsvYFnvjMCXsa5l3J7Ijk7QGhEwXeHMhdlqpAM5");
-
-io.on('connenction', (socket) => {
-  console.log('Connected !');
-
-  socket.on('message', (data) => {
-    console.log('Received : ', data);
-  });
-
-  // 클라이언트로부터 코인 정보 요청 시 처리
-  socket.on('getCoinData', async (symbols) => {
-    try {
-      const coinData = await getCoinData(symbols);
-      io.to(socket.id).emit('coinData', coinData);
-    } catch (error) {
-      // 오류 처리
-      console.error('Error getting coin data:', error);
-    }
-  });
-
-  socket.on('disconnect', () => {
-    console.log('Disconnected !');
-  });
-})
+app.use('/', indexRouter);
+app.use('/user', userRouter);
+app.use('/auth', authRouter);
+app.use('/api/test', testRouter);
 
 app.use('/', indexRouter);
 
