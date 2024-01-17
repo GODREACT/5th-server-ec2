@@ -9,7 +9,7 @@ class User extends Sequelize.Model{
         primaryKey: true,
         autoIncrement: true,
       },
-      // 사용자 이름 ( 본명 )
+      // 사용자 이름 ( 닉네임 )
       name: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -31,11 +31,27 @@ class User extends Sequelize.Model{
         allowNull: false,
         defaultValue: 100000000
       },
-      // 보유 코인
-      coin: {
-        type: Sequelize.JSON,
+      // 보유 지갑 번호
+      wallet_num: {
+        type: Sequelize.INTEGER,
         allowNull: true,
+        unique: true
       },
+      // 어떤 방법으로 회원가입 했는지 ( normal, google, kakao ... )
+      mehod: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      // 신규 생성 날짜
+      createdAt: {
+        type:Sequelize.DATE,
+        defaultValue: new Date()
+      },
+      // 업데이트 날짜 ( 비밀번호 변경, 닉네임 변경 등 )
+      updatedAt: {
+        type:Sequelize.DATE,
+        defaultValue: new Date()
+      }
     },
     {
       sequelize,
