@@ -5,9 +5,7 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 // const cookieSession = require('cookie-session');
 const passport = require('passport');
-const {sequelize} = require('./models');
 require("dotenv").config({ path: "./.env" });
-const session = require('express-session');
 const path = require('path');
 const http = require('http');
 const jwt = require("jsonwebtoken");
@@ -29,7 +27,6 @@ passportConfig();
 // const server = http.createServer(app);
 // const io = socketIo(server);
 
-const indexRouter = require('./routes/index');
 
 const htmlRouter = require('./routes/html.js');
 const htmlreviewRouter = require('./routes/htmlreview.js');
@@ -39,16 +36,6 @@ const payload = {
     access_key: "JkpxthVIGy0EtmtyU00axkI8MKVsyvoxdTJ4hDn4", 
     nonce: uuidv4(),
 };
-
-// force 에 true가 들어가면 테이블을 재생성함
-sequelize.sync({ force: false })
-  .then(() => {
-    console.log('데이터베이스 연결 성공');
-  })
-  .catch((err) => {
-    console.error(err);
-  });
-
 
 // force 에 true가 들어가면 테이블을 재생성함
 sequelize.sync({ force: false })
@@ -94,8 +81,6 @@ app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/auth', authRouter);
 app.use('/api/test', testRouter);
-
-app.use('/', indexRouter);
 
 app.use('/html', htmlRouter);
 app.use('/htmlreview', htmlreviewRouter);

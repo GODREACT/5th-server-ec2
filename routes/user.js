@@ -13,7 +13,7 @@ router.get('/data/:id', (req, res) => {
       }
       })
       .then((result) => {
-        console.log(result);
+        // console.log(result);
         res.send(result);
       })
       .catch((err) => {
