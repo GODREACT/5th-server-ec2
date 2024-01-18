@@ -24,6 +24,14 @@ router.get('/data/:id', (req, res) => {
   }
 })
 
+router.get('/wallet/data/:id', (req, res) => {
+  try {
+    
+  } catch(err) {
+    console.log(err);
+  }
+})
+
 router.patch('/ask/:id', (req, res) => {
   try {
     models.User.update({
