@@ -4,6 +4,7 @@ const Sequelize = require('sequelize');
 class Wallet extends Sequelize.Model{
   static initiate(sequelize) {
     Wallet.init({
+      // 지갑 코드
       code: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -51,4 +52,9 @@ class Wallet extends Sequelize.Model{
       collate: 'utf8_general_ci',
     })
   }
+  static associate(db) {
+    db.Wallet.belongsTo(db.User, {foreignKey: 'code', as:'wallet', sourceKey: 'wallet_num'});
+  }
 }
+
+module.exports = Wallet;

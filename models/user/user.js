@@ -64,6 +64,11 @@ class User extends Sequelize.Model{
       collate: 'utf8_general_ci',
     })
   }
+  static associate(db) {
+    db.User.hasMany(db.Htmlreview, {foreignKey: 'userid',sourceKey: 'id'});
+    db.User.hasOne(db.Wallet, {foreignKey: 'code', sourceKey:'wallet_num'});
+    // db.User.hasMany(db.Review, {foreignKey: 'userid',sourceKey:'id'})
+  }
 };
 
 module.exports = User;

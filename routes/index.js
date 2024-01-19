@@ -4,14 +4,14 @@ const { Op } = require('sequelize');
 const router = express.Router();
 
 
-router.get('/', async (req, res, next) => {
-  try {
-    res.render('index');
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
-});
+// router.get('/', async (req, res, next) => {
+//   try {
+//     res.render('index');
+//   } catch (err) {
+//     console.error(err);
+//     next(err);
+//   }
+// });
 
 router.use('/images', express.static( 'images')); //이미지 접근 권한
 
@@ -21,7 +21,7 @@ router.post('/login', async (req, res) => {
     const user = req.body;
     await models.User.findOne({
       where: {
-        id: user.id
+        email: user.email
       }
     })
     .then(result => {
