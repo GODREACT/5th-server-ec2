@@ -12,6 +12,17 @@ const client_id = process.env.GOOGLE_CLIENT_ID;
 const client_secret = process.env.GOOGLE_CLIENT_SECRET;
 const redirect_uri = process.env.GOOGLE_REDIRECT_URI;
 
+const cookieConfig = {
+  //cookieConfig는 키, 밸류 외에 설정을 보낼 수 있다.
+    maxAge : 30000,
+      //밀리초 단위로 들어가는데 30000을 설정하면 30초만료 쿠키를 생성한다. 
+      path: '/',
+      httpOnly: true,
+      //통신할때만 접속할 수 있다. 기본값은 false임 
+      signed: true,
+      //쿠키를 암호화 시킨다. 
+  };
+
 router.post('/google/data', async (req, res) => {
   const code = req.body.code;
   const url = `https://oauth2.googleapis.com/token`;
@@ -38,22 +49,12 @@ router.post('/google/data', async (req, res) => {
           })
           .then((user) => {
             console.log(user.data.email);
-            models.User
-              .findAll({
-                where : {
-                  email : user.data.email
-                }
-              })
-              .then((result) => {
-                if(result) {
-                  res.send('0');
-                } else {
-                  res.send(user.data.email);
-                }
-              })
-              .catch((err) => {
-                console.log(err);
-              })
+            const exUser = models.User.findOne({where: { email : user.data.email }});
+            if(exUser) {
+              res.send('로그인 성공');
+            } else {
+
+            }
           })
           .catch((err) => {
             console.log(err);
@@ -86,7 +87,7 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
      await User.create({
         email : email,
         name : name,
-        password: password, // 비밀번호에 해시문자를 넣어준다.
+        password: hash, // 비밀번호에 해시문자를 넣어준다.
         method : method,
      });
 
@@ -100,8 +101,8 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
 router.post('/locallogin', isNotLoggedIn, (req, res, next) => {
   console.log(req.body);
   passport.authenticate('local', (authError, user, info) => {
-    console.log(user);
-    console.log(info);
+    // console.log(user);
+    // console.log(info);
     if(authError) {
       console.log(authError);
       return next(authError);
@@ -115,7 +116,10 @@ router.post('/locallogin', isNotLoggedIn, (req, res, next) => {
         console.error(loginError);
         return next(loginError);
       }
-      return res.redirect('/');
+      // res.setHeader('Set-Cookie', `${user.dataValues.email}`);
+      console.log(user);
+      res.cookie('loginCookie', 'value', cookieConfig);
+      res.redirect('http://localhost:3000');
     });
   })(req, res, next);
 })

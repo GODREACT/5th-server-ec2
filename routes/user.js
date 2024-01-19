@@ -13,13 +13,21 @@ router.get('/data/:id', (req, res) => {
       }
       })
       .then((result) => {
-        console.log(result);
+        // console.log(result);
         res.send(result);
       })
       .catch((err) => {
         console.log(err);
       })
   } catch (err) {
+    console.log(err);
+  }
+})
+
+router.get('/wallet/data/:id', (req, res) => {
+  try {
+    
+  } catch(err) {
     console.log(err);
   }
 })
