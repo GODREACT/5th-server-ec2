@@ -22,11 +22,8 @@ router.post('/images', upload.single('img_url'), (req,res) => {
   res.status(200).send({'path' : path});
 });
 
-// router.put('/images', upload.single('img_url'), (req,res) => {
-//   console.log(req.file);
-//   const path = 'http://localhost:3001/images' + req.file.originalname;
-//   res.status(200).send({'path' : path});
-// });
+// 이미지 여러개 받을때
+
 
 router.use('/images', express.static('images'));
 
