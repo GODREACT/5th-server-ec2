@@ -32,7 +32,7 @@ Htmlreview.associate(db);
 
 db.User = User;
 
-User.initiate(sequelize);
+
 
 
 module.exports = db;

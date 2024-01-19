@@ -5,9 +5,8 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 // const cookieSession = require('cookie-session');
 const passport = require('passport');
-const {sequelize} = require('./models');
 require("dotenv").config({ path: "./.env" });
-const session = require('express-session');
+
 const path = require('path');
 const http = require('http');
 const jwt = require("jsonwebtoken");
@@ -28,8 +27,6 @@ const app = express();
 passportConfig();
 // const server = http.createServer(app);
 // const io = socketIo(server);
-
-const indexRouter = require('./routes/index');
 
 const htmlRouter = require('./routes/html.js');
 const htmlreviewRouter = require('./routes/htmlreview.js');
