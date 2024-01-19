@@ -16,8 +16,9 @@ module.exports = () => {
       new GoogleStrategy(
          {
             clientID: process.env.GOOGLE_CLIENT_ID, // 구글 로그인에서 발급받은 REST API 키
-            clientSecret: process.env.GOOGLE_SECRET,
-            callbackURL: process.env.GOOGLE_REDIRECT_URI, // 구글 로그인 Redirect URI 경로
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: 'http://localhost:3001/auth/google/callback',  // 구글 로그인 Redirect URI 경로
+            passReqToCallback: true,
          },
          async (accessToken, refreshToken, profile, done) => {
             console.log('google profile : ', profile);

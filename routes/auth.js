@@ -70,13 +70,14 @@ router.post('/google/data', async (req, res) => {
 
 // 사용자 미들웨어 isNotLoggedIn을 통과해야 async (req, res, next) => 미들웨어 실행
 router.post('/join', isNotLoggedIn, async (req, res, next) => {
-  const { name, email, password, method } = req.body; // 프론트에서 보낸 폼데이터를 받는다.
+  const { name, email, password, method, wallet_code } = req.body; // 프론트에서 보낸 폼데이터를 받는다.
 
   try {
      // 기존에 이메일로 가입한 사람이 있나 검사 (중복 가입 방지)
      const exUser = await User.findOne({ where: { email } });
      if (exUser) {
-        return res.redirect('/join?error=exist'); // 에러페이지로 바로 리다이렉트
+        // return res.redirect('/join?error=exist'); // 에러페이지로 바로 리다이렉트
+        return res.send('fail');
      }
 
      // 정상적인 회원가입 절차면 해시화
@@ -89,27 +90,25 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
         name : name,
         password: hash, // 비밀번호에 해시문자를 넣어준다.
         method : method,
+        wallet_code: wallet_code
      });
 
-     return res.redirect('/');
+     return res.send('success');
   } catch (error) {
      console.error(error);
      return next(error);
   }
 });
 
-router.post('/locallogin', isNotLoggedIn, (req, res, next) => {
-  console.log(req.body);
+router.post('/login', isNotLoggedIn, (req, res, next) => {
   passport.authenticate('local', (authError, user, info) => {
-    // console.log(user);
-    // console.log(info);
     if(authError) {
       console.log(authError);
       return next(authError);
     }
     if(!user) {
-      // console.log(info)
-      return res.redirect(`/?loginError=${info.message}`);
+      // return res.redirect(`/?loginError=${info.message}`);
+      return res.send('2');
     }
     return req.login(user, (loginError) => {
       if(loginError) {
@@ -117,24 +116,20 @@ router.post('/locallogin', isNotLoggedIn, (req, res, next) => {
         return next(loginError);
       }
       // res.setHeader('Set-Cookie', `${user.dataValues.email}`);
-      console.log(user);
       res.cookie('loginCookie', 'value', cookieConfig);
-      res.redirect('http://localhost:3000');
+      // res.redirect('http://localhost:3000');
+      res.send('1');
     });
   })(req, res, next);
 })
 
-//* 구글로 로그인하기 라우터 ***********************
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] })); // 프로파일과 이메일 정보를 받는다.
+// 구글로 로그인하기
+router.get('/googlelogin', passport.authenticate('google', { scope: ['profile', 'email']}));
 
-//? 위에서 구글 서버 로그인이 되면, 네이버 redirect url 설정에 따라 이쪽 라우터로 오게 된다. 인증 코드를 박게됨
-router.get(
-   '/google/callback',
-   passport.authenticate('google', { failureRedirect: '/' }), //? 그리고 passport 로그인 전략에 의해 googleStrategy로 가서 구글계정 정보와 DB를 비교해서 회원가입시키거나 로그인 처리하게 한다.
-   (req, res) => {
-      res.send('로그인됨');
-   },
-);
+router.get('/google/callback', (req, res) => {
+  console.log(req);
+  res.status(200);
+})
 
 router.get('/logout', isLoggedIn, (req, res) => {
   req.logout();

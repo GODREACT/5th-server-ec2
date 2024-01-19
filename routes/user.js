@@ -24,13 +24,6 @@ router.get('/data/:id', (req, res) => {
   }
 })
 
-router.get('/wallet/data/:id', (req, res) => {
-  try {
-    
-  } catch(err) {
-    console.log(err);
-  }
-})
 
 router.patch('/ask/:id', (req, res) => {
   try {
@@ -53,30 +46,58 @@ router.patch('/ask/:id', (req, res) => {
   }
 })
 
-router.post('/wallet/ask/:id', (req, res) => {
+// 지갑 코드 가져오기
+router.get('/wallet/:id', async (req, res) => {
   try {
-
+    // console.log(req);
+    await models.User.findOne({
+        where: {
+          id : req.params.id
+        }
+      })
+      .then((result) => {
+        res.send(result.wallet_code);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   } catch(err) {
     console.log(err);
   }
 })
 
-router.post('/register', (req, res) => {
+// 지갑 안에 어떤 코인이 있는지
+router.get('/wallet/get/:code', async (req, res) => {
   try {
-    const userInfo = req.body
-    models.User
-      .create({
-        name : userInfo.name,
-        email : userInfo.email,
-        password : userInfo.password,
-        method: userInfo.method
+    console.log(req.params.code);
+    await models.Wallet.findAll({
+        where: {
+          code: req.params.code
+        }
       })
       .then((result) => {
-        res.status(200).send('회원가입 성공 !');
+        res.send(result);
       })
       .catch((err) => {
         console.log(err);
       })
+  } catch(err) {
+    console.log(err);
+  }
+})
+
+// 지갑에 코인 추가하기
+router.post('/wallet/ask/:code', async (req, res) => {
+  try {
+    console.log(req.params.code);
+    console.log(req.body);
+    await models.Wallet.create({
+      code : req.params.code,
+      coin_name : req.body.code,
+      fullcode : req.body.fullcode,
+      volume: req.body.volume,
+      totalprice: req.body.totalPrice
+    })
   } catch(err) {
     console.log(err);
   }
