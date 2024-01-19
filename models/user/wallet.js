@@ -6,9 +6,9 @@ class Wallet extends Sequelize.Model{
     Wallet.init({
       // 지갑 코드
       code: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false,
-        primaryKey: true
+        // primaryKey: true
       },
       // 코인 이름. code
       coin_name: {
@@ -25,13 +25,8 @@ class Wallet extends Sequelize.Model{
         type: Sequelize.FLOAT,
         allowNull: false,
       },
-      // 평가금
-      market_value: {
-        type: Sequelize.BIGINT,
-        allowNull: false,
-      },
-      // 평균가
-      average_value: {
+      // 총 가격
+      totalprice: {
         type: Sequelize.BIGINT,
         allowNull: false,
       },
@@ -53,7 +48,7 @@ class Wallet extends Sequelize.Model{
     })
   }
   static associate(db) {
-    db.Wallet.belongsTo(db.User, {foreignKey: 'code', as:'wallet', sourceKey: 'wallet_num'});
+    db.Wallet.belongsTo(db.User, {foreignKey: 'code', as:'wallet', sourceKey: 'wallet_code'});
   }
 }
 

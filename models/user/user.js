@@ -23,7 +23,7 @@ class User extends Sequelize.Model{
       // 비밀번호
       password: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       // 잔고, 가입 시 기본 투자금 1억 지급
       balance : {
@@ -32,8 +32,8 @@ class User extends Sequelize.Model{
         defaultValue: 100000000
       },
       // 보유 지갑 번호
-      wallet_num: {
-        type: Sequelize.INTEGER,
+      wallet_code: {
+        type: Sequelize.STRING,
         allowNull: true,
         unique: true
       },
@@ -66,7 +66,8 @@ class User extends Sequelize.Model{
   }
   static associate(db) {
     db.User.hasMany(db.Htmlreview, {foreignKey: 'userid',sourceKey: 'id'});
-    db.User.hasOne(db.Wallet, {foreignKey: 'code', sourceKey:'wallet_num'});
+    db.User.hasMany(db.Wallet, {foreignKey: 'code', as:'wallet', sourceKey:'wallet_code'});
+    // db.User.hasMany(db.Review, {foreignKey: 'userid',sourceKey:'id'})
   }
 };
 
