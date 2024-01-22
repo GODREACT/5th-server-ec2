@@ -45,7 +45,7 @@ router.post('/signup', async(req, res) => {
       password: user.password,
       email: user.email,
       phone: user.phone
-    })
+    })  
     .then(result => {
       res.send('success');
     })
