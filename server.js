@@ -8,6 +8,13 @@ const http = require('http');
 const jwt = require("jsonwebtoken");
 const {v4: uuidv4} = require('uuid');
 const socketIo = require("socket.io");
+const {sequelize} = require('./models');
+const axios = require('axios');
+require("dotenv").config();
+
+const CustomernoticeRoutes= require("./routes/cutomer_notice");
+const CustomerbugRoutes = require("./routes/cutomer_bug");
+const StockdetailRoutes = require("./routes/stockdetail");
 
 const app = express();
 const server = http.createServer(app);
@@ -18,7 +25,6 @@ const payload = {
     nonce: uuidv4(),
 };
 
-
 // const io = socketIo('wss://api.upbit.com/websocket/v1');
 app.set('port', process.env.PORT || 3001);
 app.set('view engine', 'html');
@@ -28,17 +34,18 @@ nunjucks.configure('views', {
   watch: true,
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'images')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
   origin: true,
   credentials: true
 }));
-app.use(express.cookieParser(process.env.COOKIE_SECRET));
-app.use(express.cookieSession({
+app.use(cookieParser(process.env.COOKIE_SECRET));
+// app.use(express.cookieParser(process.env.COOKIE_SECRET));
+app.use(session({
   resave: false,
-  saveUnitialized: false,
+  saveUninitialized: false,
   secret: process.env.COOKIE_SECRET,
   cookie: {
     httpOnly: true,
@@ -65,7 +72,13 @@ const getCoinData = async (symbols) => {
     throw error;
   }
 };
+// 
 
+app.use('/notice_detail', CustomernoticeRoutes);
+app.use('/bug',CustomerbugRoutes);
+app.use('/stock_detail',StockdetailRoutes);
+
+// 
 const jwtToken = jwt.sign(payload, "IQsvYFnvjMCXsa5l3J7Ijk7QGhEwXeHMhdlqpAM5");
 
 io.on('connenction', (socket) => {
@@ -90,6 +103,16 @@ io.on('connenction', (socket) => {
     console.log('Disconnected !');
   });
 })
+
+sequelize.sync({ force: false })
+  .then(() => {
+    console.log('데이터베이스 연결 성공');
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+
+
 
 app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기 중');
