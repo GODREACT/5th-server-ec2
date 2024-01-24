@@ -11,6 +11,14 @@ const http = require('http');
 const jwt = require("jsonwebtoken");
 const {v4: uuidv4} = require('uuid');
 const socketIo = require("socket.io");
+
+const axios = require('axios');
+require("dotenv").config();
+
+const CustomernoticeRoutes= require("./routes/cutomer_notice");
+const CustomerbugRoutes = require("./routes/cutomer_bug");
+const StockdetailRoutes = require("./routes/stockdetail");
+
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -56,7 +64,7 @@ nunjucks.configure('views', {
   watch: true,
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(express.static(path.join(__dirname, 'images')));
 
 app.use(express.json());
@@ -65,7 +73,6 @@ app.use(cors({
   origin: true,
   credentials: true
 }));
-
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
   resave: false,
@@ -80,6 +87,45 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Upbit API 호출 함수
+const getCoinData = async (symbols) => {
+  try {
+    const response = await axios.get(UPBIT_API_URL, {
+      params: { markets: symbols.join(','), isDetails: false },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching coin data:', error);
+    throw error;
+  }
+};
+
+const jwtToken = jwt.sign(payload, "IQsvYFnvjMCXsa5l3J7Ijk7QGhEwXeHMhdlqpAM5");
+
+io.on('connenction', (socket) => {
+  console.log('Connected !');
+
+  socket.on('message', (data) => {
+    console.log('Received : ', data);
+  });
+
+  // 클라이언트로부터 코인 정보 요청 시 처리
+  socket.on('getCoinData', async (symbols) => {
+    try {
+      const coinData = await getCoinData(symbols);
+      io.to(socket.id).emit('coinData', coinData);
+    } catch (error) {
+      // 오류 처리
+      console.error('Error getting coin data:', error);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Disconnected !');
+  });
+})
+
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/auth', authRouter);
@@ -91,6 +137,7 @@ app.use('/htmlreview', htmlreviewRouter);
 app.use('/notice_detail', CustomernoticeRoutes);
 app.use('/bug',CustomerbugRoutes);
 app.use('/stock_detail',StockdetailRoutes);
+
 
 app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기 중');
