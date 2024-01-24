@@ -37,7 +37,9 @@ passportConfig();
 
 const htmlRouter = require('./routes/html.js');
 const htmlreviewRouter = require('./routes/htmlreview.js');
-
+const CustomernoticeRoutes= require("./routes/cutomer_notice");
+const CustomerbugRoutes = require("./routes/cutomer_bug");
+const StockdetailRoutes = require("./routes/stockdetail");
 
 const payload = {
     access_key: "JkpxthVIGy0EtmtyU00axkI8MKVsyvoxdTJ4hDn4", 
@@ -62,7 +64,9 @@ nunjucks.configure('views', {
   watch: true,
 });
 
+
 app.use(express.static(path.join(__dirname, 'images')));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
@@ -133,15 +137,6 @@ app.use('/htmlreview', htmlreviewRouter);
 app.use('/notice_detail', CustomernoticeRoutes);
 app.use('/bug',CustomerbugRoutes);
 app.use('/stock_detail',StockdetailRoutes);
-
-sequelize.sync({ force: false })
-  .then(() => {
-    console.log('데이터베이스 연결 성공');
-  })
-  .catch((err) => {
-    console.error(err);
-  });
-
 
 
 app.listen(app.get('port'), () => {
