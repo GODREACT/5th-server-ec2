@@ -26,11 +26,12 @@ router.get('/:id', async(req, res) => {
   }
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const reqBody = req.body;
-    const result = models.Htmlreview.create(reqBody);
-    console.log(result);
+    console.log("reqBody: ", reqBody);
+    const result = await models.Htmlreview.create(reqBody);
+    console.log("post result: ", result);
     res.status(201).end();
   } catch(err) {
     console.log(err);
