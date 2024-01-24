@@ -29,7 +29,9 @@ passportConfig();
 
 const htmlRouter = require('./routes/html.js');
 const htmlreviewRouter = require('./routes/htmlreview.js');
-
+const CustomernoticeRoutes= require("./routes/cutomer_notice");
+const CustomerbugRoutes = require("./routes/cutomer_bug");
+const StockdetailRoutes = require("./routes/stockdetail");
 
 const payload = {
     access_key: "JkpxthVIGy0EtmtyU00axkI8MKVsyvoxdTJ4hDn4", 
@@ -55,6 +57,8 @@ nunjucks.configure('views', {
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'images')));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
@@ -83,6 +87,10 @@ app.use('/api/test', testRouter);
 
 app.use('/html', htmlRouter);
 app.use('/htmlreview', htmlreviewRouter);
+
+app.use('/notice_detail', CustomernoticeRoutes);
+app.use('/bug',CustomerbugRoutes);
+app.use('/stock_detail',StockdetailRoutes);
 
 app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기 중');
