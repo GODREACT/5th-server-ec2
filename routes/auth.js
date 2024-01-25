@@ -128,6 +128,13 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
 // 구글로 로그인하기
 router.post('/googlelogin', async (req, res) => {
   try {
+    function generateRandomCode(n) {
+      let str = ''
+      for (let i = 0; i < n; i++) {
+        str += Math.floor(Math.random() * 10)
+      }
+      return str
+    }
     console.log(req.body.token);
     const user = jwt.decode(req.body.token);
     const a = await models.User.findOne({
@@ -137,7 +144,7 @@ router.post('/googlelogin', async (req, res) => {
       }
     })
     if(a) {
-      res.status(200).send('success');
+      res.send(200);
     } else {
       models.User.create({
         name: user.name,
