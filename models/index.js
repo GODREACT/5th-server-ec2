@@ -1,5 +1,7 @@
 const Sequelize = require('sequelize');
 
+const Lucky = require('./lucky');
+
 const User = require('./user/user');
 const Wallet = require('./user/wallet');
 const Html = require('./html');
@@ -28,9 +30,12 @@ db.Wallet = Wallet;
 db.Html =Html;
 db.Htmlreview = Htmlreview;
 
+db.Lucky = Lucky;
+
 db.Customer_notice = Customer_notice;
 db.Customer_bug = Customer_bug;
 db.Stock_detail = Stock_detail;
+
 
 
 // User.initiate(sequelize);
@@ -38,6 +43,8 @@ User.initiate(sequelize);//DB를 추가할꺼면 무조건 있어야함
 Wallet.initiate(sequelize);
 Html.initiate(sequelize);
 Htmlreview.initiate(sequelize);
+Lucky.initiate(sequelize);
+
 Customer_notice.initiate(sequelize);
 Customer_bug.initiate(sequelize);
 Stock_detail.initiate(sequelize);
