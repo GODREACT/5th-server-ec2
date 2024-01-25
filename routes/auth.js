@@ -109,6 +109,9 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
     }
     if(!user) {
       // return res.redirect(`/?loginError=${info.message}`);
+      if(info.message == '구글로그인으로 로그인해주세요.') {
+        return res.send('3');
+      }
       return res.send('2');
     }
     return req.login(user, (loginError) => {

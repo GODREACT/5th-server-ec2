@@ -13,6 +13,9 @@ module.exports = () => {
       const exUser = await models.User.findOne({ where : { email }});
       console.log(exUser);
       if(exUser) {
+        if(exUser.method == 'google') {
+          done(null, false, {message : '구글로그인으로 로그인해주세요.'})
+        }
         const result = await bcrypt.compare(password, exUser.password);
         if(result) {
           done(null, exUser);

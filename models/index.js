@@ -21,10 +21,6 @@ db.Customer_notice = Customer_notice;
 db.Customer_bug = Customer_bug;
 db.Stock_detail = Stock_detail;
 
-Customer_notice.initiate(sequelize);
-Customer_bug.initiate(sequelize);
-Stock_detail.initiate(sequelize);
-
 // 유저 관련
 db.User = User;
 db.Wallet = Wallet;
