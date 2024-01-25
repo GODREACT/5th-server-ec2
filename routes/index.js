@@ -3,16 +3,6 @@ const models = require('../models');
 const { Op } = require('sequelize');
 const router = express.Router();
 
-
-// router.get('/', async (req, res, next) => {
-//   try {
-//     res.render('index');
-//   } catch (err) {
-//     console.error(err);
-//     next(err);
-//   }
-// });
-
 router.use('/images', express.static( 'images')); //이미지 접근 권한
 
 // 로그인 , 회원가입
