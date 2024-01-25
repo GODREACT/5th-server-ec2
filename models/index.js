@@ -1,8 +1,5 @@
 const Sequelize = require('sequelize');
 
-const Customer_notice = require('./customer/customer_notice')
-const Customer_bug = require('./customer/customer_bug');
-const Stock_detail = require('./stockdetail');
 const User = require('./user/user');
 const Wallet = require('./user/wallet');
 const Html = require('./html');

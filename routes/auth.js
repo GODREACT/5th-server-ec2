@@ -4,6 +4,7 @@ const models = require('../models');
 const User = require('../models/user/user.js');
 const bcrypt = require('bcrypt');
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 const { isNotLoggedIn, isLoggedIn } = require('./middleware');
 
 const router = express.Router();
@@ -115,20 +116,42 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
         console.error(loginError);
         return next(loginError);
       }
-      // res.setHeader('Set-Cookie', `${user.dataValues.email}`);
       res.cookie('loginCookie', 'value', cookieConfig);
-      // res.redirect('http://localhost:3000');
       res.send('1');
     });
   })(req, res, next);
 })
 
 // 구글로 로그인하기
-router.get('/googlelogin', passport.authenticate('google', { scope: ['profile', 'email']}));
-
-router.get('/google/callback', (req, res) => {
-  console.log(req);
-  res.status(200);
+router.post('/googlelogin', async (req, res) => {
+  try {
+    console.log(req.body.token);
+    const user = jwt.decode(req.body.token);
+    const a = await models.User.findOne({
+      where: {
+        email : user.email,
+        method : 'google'
+      }
+    })
+    if(a) {
+      res.status(200).send('success');
+    } else {
+      models.User.create({
+        name: user.name,
+        email: user.email,
+        wallet_code: generateRandomCode(6),
+        method: 'google'
+      })
+      .then((result) => {
+        res.status(200).send(`${user.email}`);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    }
+  } catch(err) {
+    console.log(err)
+  }
 })
 
 router.get('/logout', isLoggedIn, (req, res) => {

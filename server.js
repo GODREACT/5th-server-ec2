@@ -13,12 +13,7 @@ const {v4: uuidv4} = require('uuid');
 
 require("dotenv").config();
 
-const CustomernoticeRoutes= require("./routes/cutomer_notice");
-const CustomerbugRoutes = require("./routes/cutomer_bug");
-const StockdetailRoutes = require("./routes/stockdetail");
-
 const dotenv = require('dotenv');
-
 dotenv.config();
 
 const passportConfig = require('./passport');
@@ -30,14 +25,12 @@ const testRouter = require('./routes/test.js');
 
 const app = express();
 passportConfig();
-// const server = http.createServer(app);
-// const io = socketIo(server);
 
 const htmlRouter = require('./routes/html.js');
 const htmlreviewRouter = require('./routes/htmlreview.js');
-const CustomernoticeRoutes= require("./routes/cutomer_notice");
-const CustomerbugRoutes = require("./routes/cutomer_bug");
-const StockdetailRoutes = require("./routes/stockdetail");
+const customernoticeRoutes= require("./routes/cutomer_notice");
+const customerbugRoutes = require("./routes/cutomer_bug");
+const stockdetailRoutes = require("./routes/stockdetail");
 
 const payload = {
     access_key: "JkpxthVIGy0EtmtyU00axkI8MKVsyvoxdTJ4hDn4", 
@@ -92,9 +85,9 @@ app.use('/api/test', testRouter);
 app.use('/html', htmlRouter);
 app.use('/htmlreview', htmlreviewRouter);
 
-app.use('/notice_detail', CustomernoticeRoutes);
-app.use('/bug',CustomerbugRoutes);
-app.use('/stock_detail',StockdetailRoutes);
+app.use('/notice_detail', customernoticeRoutes);
+app.use('/bug', customerbugRoutes);
+app.use('/stock_detail', stockdetailRoutes);
 
 
 app.listen(app.get('port'), () => {
