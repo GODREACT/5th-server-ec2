@@ -26,27 +26,62 @@ router.post('/login', async (req, res) => {
   }
 })
 
-router.post('/signup', async(req, res) => {
+router.post('/kakao', async (req, res, next) => {
   try {
-    const user = req.body;
-    await models.User.create({
-      id: user.id,
-      name: user.name,
-      password: user.password,
-      email: user.email,
-      phone: user.phone
-    })
-    .then(result => {
-      res.send('success');
-    })
-    .catch(err => {
-      console.log(err);
-      res.send('fail');
-    })
-  } catch(err) {
-    console.log(err);
+    const {access_token} = req.body;
+    console.log("카카오 access_token: ", access_token);
+
+    var request = require('request');
+    var options = {
+        url: 'https://kapi.kakao.com/v2/user/me',
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+    };
+
+    request.post(options, (error, response, body) => {
+      if (!error && response.statusCode == 200) {
+        console.log("카카오로그인 body: ", JSON.parse(body));
+        const userData = JSON.parse(body);
+        res.status(200).json(userData);
+        //여기서 쿠키 설정해주기?
+      } else {
+        res.status(response.statusCode).end();
+        console.log("error = " + response.statusCode);
+      }
+    });
+    // console.log("kakaoResponse.data: ", kakaoResponse.data);
+  } catch (error) {
+    next(error);
+  }
+});
+router.post('/api/user/kakao-login', async (req, res) =>{
+  try{
+    console.log("옴");
+    console.log(req.body.userData.id);
+    const body = req.body.userData;
+    const exUser = models.User.findOrCreate({where: { email : body.id },defaults:{email : body.id,
+      name : body.properties.nickname,
+      // 비밀번호에 해시문자를 넣어준다.
+      method : "kakao",}});
+    if(exUser) {
+      res.send(200)
+    }
+  }catch(error){
+
   }
 })
+router.get('/lucky',async(req,res)=>{
+    try {
+      await models.Lucky.findAll({})
+      .then(result => {
+        res.send(result);
+      })
+    } catch(err) {
+      console.log(err);
+    }
+  })
+
 // 하나 검색
 router.get('/search/:keyword', async (req, res) => {
   try {
