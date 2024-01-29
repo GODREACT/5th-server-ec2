@@ -4,6 +4,7 @@ const models = require('../models');
 const User = require('../models/user/user.js');
 const bcrypt = require('bcrypt');
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 const { isNotLoggedIn, isLoggedIn } = require('./middleware');
 
 const router = express.Router();
@@ -55,8 +56,11 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
       console.log(authError);
       return next(authError);
     }
-    if (!user) {
-      // 로그인 실패 시 에러 응답을 보내고 함수 종료
+    if(!user) {
+      // return res.redirect(`/?loginError=${info.message}`);
+      if(info.message == '구글로그인으로 로그인해주세요.') {
+        return res.send('3');
+      }
       return res.send('2');
     }
     return req.login(user, (loginError) => {
@@ -65,7 +69,6 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
         return next(loginError);
       }
       
-
       // 로그인 성공 시 쿠키 설정 후 응답
       res.cookie('user-cookie', user.email, cookieConfig);
       console.log('Cookie Set:', user.email); // 로그 추가
@@ -84,6 +87,45 @@ router.get('/test', isLoggedIn, (req, res, next) => {
     res.redirect('/');
   });
 });
+
+// 구글로 로그인하기
+router.post('/googlelogin', async (req, res) => {
+  try {
+    function generateRandomCode(n) {
+      let str = ''
+      for (let i = 0; i < n; i++) {
+        str += Math.floor(Math.random() * 10)
+      }
+      return str
+    }
+    console.log(req.body.token);
+    const user = jwt.decode(req.body.token);
+    const a = await models.User.findOne({
+      where: {
+        email : user.email,
+        method : 'google'
+      }
+    })
+    if(a) {
+      res.send(200);
+    } else {
+      models.User.create({
+        name: user.name,
+        email: user.email,
+        wallet_code: generateRandomCode(6),
+        method: 'google'
+      })
+      .then((result) => {
+        res.status(200).send(`${user.email}`);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    }
+  } catch(err) {
+    console.log(err)
+  }
+})
 
 
 module.exports = router;

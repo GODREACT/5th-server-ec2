@@ -9,7 +9,7 @@ router.get('/data/:id', (req, res) => {
     // console.log(req.params.id);
     models.User.findOne({
       where: {
-        id: req.params.id
+        email: req.params.id
       }
       })
       .then((result) => {

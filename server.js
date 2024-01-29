@@ -10,9 +10,10 @@ const path = require('path');
 const http = require('http');
 const jwt = require("jsonwebtoken");
 const {v4: uuidv4} = require('uuid');
-const socketIo = require("socket.io");
-const dotenv = require('dotenv');
 
+require("dotenv").config();
+
+const dotenv = require('dotenv');
 dotenv.config();
 
 const passportConfig = require('./passport');
@@ -24,12 +25,12 @@ const testRouter = require('./routes/test.js');
 
 const app = express();
 passportConfig();
-// const server = http.createServer(app);
-// const io = socketIo(server);
 
 const htmlRouter = require('./routes/html.js');
 const htmlreviewRouter = require('./routes/htmlreview.js');
-
+const customernoticeRoutes= require("./routes/cutomer_notice");
+const customerbugRoutes = require("./routes/cutomer_bug");
+const stockdetailRoutes = require("./routes/stockdetail");
 
 const payload = {
     access_key: "JkpxthVIGy0EtmtyU00axkI8MKVsyvoxdTJ4hDn4", 
@@ -54,14 +55,14 @@ nunjucks.configure('views', {
   watch: true,
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'images')));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true
 }));
-
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
   name: 'user-cookies',
@@ -77,9 +78,13 @@ app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/auth', authRouter);
 app.use('/api/test', testRouter);
-
 app.use('/html', htmlRouter);
 app.use('/htmlreview', htmlreviewRouter);
+
+app.use('/notice_detail', customernoticeRoutes);
+app.use('/bug', customerbugRoutes);
+app.use('/stock_detail', stockdetailRoutes);
+
 
 app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기 중');
