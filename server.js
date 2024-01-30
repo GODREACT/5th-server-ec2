@@ -46,7 +46,6 @@ sequelize.sync({ force: false })
     console.error(err);
   });
 
-// const io = socketIo('wss://api.upbit.com/websocket/v1');
 app.set('port', process.env.PORT || 3001);
 app.set('view engine', 'html');
 // 넌적스 초기화
@@ -55,14 +54,16 @@ nunjucks.configure('views', {
   watch: true,
 });
 
-app.use(express.static(path.join(__dirname, 'images')));
+// app.use(express.static(path.join(__dirname, 'images')));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
-  origin: 'http://localhost:3000',
+  // origin: 'http://localhost:3000',
+  origin: true,
   credentials: true
 }));
+// app.use(cors());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
   name: 'user-cookies',

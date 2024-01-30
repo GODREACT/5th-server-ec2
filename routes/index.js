@@ -55,22 +55,7 @@ router.post('/kakao', async (req, res, next) => {
     next(error);
   }
 });
-router.post('/api/user/kakao-login', async (req, res) =>{
-  try{
-    console.log("옴");
-    console.log(req.body.userData.id);
-    const body = req.body.userData;
-    const exUser = models.User.findOrCreate({where: { email : body.id },defaults:{email : body.id,
-      name : body.properties.nickname,
-      // 비밀번호에 해시문자를 넣어준다.
-      method : "kakao",}});
-    if(exUser) {
-      res.send(200)
-    }
-  }catch(error){
 
-  }
-})
 router.get('/lucky',async(req,res)=>{
     try {
       await models.Lucky.findAll({})

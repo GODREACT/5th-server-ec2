@@ -1,16 +1,16 @@
 const passport = require('passport');
-const User = require('../models');
+const models = require('../models');
 const local = require('./localStrategy');
 // const google = require('./googleStrategy');
 
 module.exports = () => {
   passport.serializeUser((user, done) => {
-    console.log(user);
-    done(null, user.id);
+    // console.log(user);
+    done(null, user.email);
   })
   
   passport.deserializeUser((id, done) => {
-    User.findOne({ where : { id } })
+    models.User.findOne({ where : { email : id } })
       .then((user) => {
         done(null, user);
       })

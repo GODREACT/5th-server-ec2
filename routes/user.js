@@ -28,11 +28,10 @@ router.get('/data/:id', (req, res) => {
 router.patch('/ask/:id', (req, res) => {
   try {
     models.User.update({
-      balance : req.body.balance,
-      coin : req.body.coin
-    },{
+        balance : req.body.balance,
+      },{
       where: {
-        id : req.params.id
+        email : req.params.id
       }
       })
       .then((result) => {
@@ -41,6 +40,26 @@ router.patch('/ask/:id', (req, res) => {
       .catch((err) => {
         console.log(err);
       })
+  } catch(err) {
+    console.log(err);
+  }
+})
+
+router.patch('/bid/:id', (req, res) => {
+  try {
+    models.User.update({
+      balance: req.body.cash
+    },{
+      where: {
+        email : req.params.id
+      }
+    })
+    .then((result) => {
+      res.send(200);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
   } catch(err) {
     console.log(err);
   }
@@ -97,6 +116,66 @@ router.post('/wallet/ask/:code', async (req, res) => {
       fullcode : req.body.fullcode,
       volume: req.body.volume,
       totalprice: req.body.totalPrice
+    })
+  } catch(err) {
+    console.log(err);
+  }
+})
+
+// 지갑에 코인 더 매수하기
+router.patch('/wallet/moreask/:code', async (req, res) => {
+  try {
+    console.log(req.body);
+    await models.Wallet.update({
+      totalprice : req.body.totalPrice,
+      volume : req.body.volume
+    }, {
+      where : {
+        code : req.params.code,
+        fullcode : req.body.fullcode
+      }
+    })
+  } catch(err) {
+    console.log(err);
+  }
+})
+
+// 지갑에 코인 매도하기
+router.patch('/wallet/bid/:code', async (req, res) => {
+  try {
+    await models.Wallet.update({
+        totalprice : req.body.totalPrice,
+        volume : req.body.volume
+      },
+      {where : {
+        code : req.params.code,
+        fullcode : req.body.fullcode
+      }
+    })
+    .then((result) => {
+      console.log(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  } catch(err) {
+    console.log(err);
+  }
+})
+
+// 코인 풀 매도
+router.delete('/wallet/delete/:code', async (req, res) => {
+  try {
+    await models.Wallet.destroy({
+      where : {
+        fullcode : req.body.fullcode
+      }
+    })
+    .then((result) => {
+      console.log(result);
+    })
+    .catch((err) => {
+      console.log(err);
     })
   } catch(err) {
     console.log(err);
