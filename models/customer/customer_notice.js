@@ -37,7 +37,6 @@ class Customer_notice extends Sequelize.Model{
       timestamps: false,
       underscored: false,
       modelName: 'fifth_project',
-      modelName: 'Notice',
       tableName: 'noticeTable',
       paranoid: false,
       charset: 'utf8',
