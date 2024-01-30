@@ -12,7 +12,7 @@ const router = express.Router();
 const cookieConfig = {
   maxAge: 3600000,
   path: '/',
-  signed: true,
+  // signed: true,
   domain: 'localhost', // 도메인 설정 수정
 };
 
@@ -70,14 +70,14 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
       }
       
       // 로그인 성공 시 쿠키 설정 후 응답
-      res.cookie('user-cookie', user.email, cookieConfig);
+      res.cookie('user-cookie', `${user.email}`, cookieConfig);
       console.log('Cookie Set:', user.email); // 로그 추가
       return res.send('1');
     });
   })(req, res, next);
 });
 
-router.get('/test', isLoggedIn, (req, res, next) => {
+router.delete('/logout', isLoggedIn, (req, res, next) => {
   console.log('로그아웃 라우터에 도달했습니다.');
   req.logout((err) => {
     if (err) {
@@ -89,7 +89,7 @@ router.get('/test', isLoggedIn, (req, res, next) => {
 });
 
 // 구글로 로그인하기
-router.post('/googlelogin', async (req, res) => {
+router.post('/googlelogin', isNotLoggedIn, async (req, res) => {
   try {
     function generateRandomCode(n) {
       let str = ''
@@ -98,7 +98,7 @@ router.post('/googlelogin', async (req, res) => {
       }
       return str
     }
-    console.log(req.body.token);
+    // console.log(req.body.token);
     const user = jwt.decode(req.body.token);
     const a = await models.User.findOne({
       where: {
@@ -107,7 +107,10 @@ router.post('/googlelogin', async (req, res) => {
       }
     })
     if(a) {
-      res.send(200);
+      console.log('로그인');
+      res.cookie('user-cookie', `${user.email}`, cookieConfig);
+      console.log('Cookie Set:', user.email); // 로그 추가
+      return res.sendStatus(200);
     } else {
       models.User.create({
         name: user.name,
@@ -116,13 +119,33 @@ router.post('/googlelogin', async (req, res) => {
         method: 'google'
       })
       .then((result) => {
-        res.status(200).send(`${user.email}`);
+        console.log('회원가입');
+        res.sendStatus(200);
       })
       .catch((err) => {
         console.log(err);
       })
     }
   } catch(err) {
+    console.log(err)
+  }
+})
+
+// 카카오 로그인
+router.post('/kakaologin', async (req, res) =>{
+  try{
+    // console.log("옴");
+    console.log(req.body.userData.id);
+    const body = req.body.userData;
+    const exUser = models.User.findOrCreate({where: { email : body.id },defaults:{email : body.id,
+      name : body.properties.nickname,
+      // 비밀번호에 해시문자를 넣어준다.
+      method : "kakao",}});
+    if(exUser) {
+      res.cookie('user-cookie', `${body.id}`, cookieConfig);
+      res.send(200)
+    }
+  }catch(error){
     console.log(err)
   }
 })

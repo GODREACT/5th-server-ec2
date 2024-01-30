@@ -9,10 +9,10 @@ class Lucky extends Sequelize.Model{
         autoIncrement: true,
         primaryKey: true,
       },
-      title: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
+      // title: {
+      //   type: Sequelize.STRING,
+      //   allowNull: false
+      // },
       content: {
         type: Sequelize.STRING,
         allowNull: false
