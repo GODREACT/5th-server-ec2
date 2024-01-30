@@ -3,7 +3,7 @@ const cors =require('cors')
 const nunjucks = require('nunjucks');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-// const cookieSession = require('cookie-session');
+const cookieSession = require('cookie-session');
 const passport = require('passport');
 require("dotenv").config({ path: "./.env" });
 const path = require('path');
@@ -54,12 +54,12 @@ nunjucks.configure('views', {
   watch: true,
 });
 
-// app.use(express.static(path.join(__dirname, 'images')));
+app.use(express.static(path.join(__dirname, 'images')));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
-  // origin: 'http://localhost:3000',
+  origin: 'http://localhost:3000',
   origin: true,
   credentials: true
 }));
