@@ -3,9 +3,8 @@ const passport = require('passport');
 const models = require('../models');
 const User = require('../models/user/user.js');
 const bcrypt = require('bcrypt');
-const axios = require('axios');
 const jwt = require('jsonwebtoken');
-const { isNotLoggedIn, isLoggedIn } = require('./middleware');
+const { isNotLoggedIn } = require('./middleware');
 
 const router = express.Router();
 
@@ -49,7 +48,7 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
   }
 });
 
-// 로그인 부분
+// 로컬 로그인 부분
 router.post('/login', isNotLoggedIn, (req, res, next) => {
   passport.authenticate('local', (authError, user, info) => {
     if (authError) {
@@ -77,7 +76,8 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
   })(req, res, next);
 });
 
-router.delete('/logout', isLoggedIn, (req, res, next) => {
+// 로그아웃
+router.delete('/logout', (req, res, next) => {
   console.log('로그아웃 라우터에 도달했습니다.');
   req.logout((err) => {
     if (err) {
@@ -89,7 +89,7 @@ router.delete('/logout', isLoggedIn, (req, res, next) => {
 });
 
 // 구글로 로그인하기
-router.post('/googlelogin', isNotLoggedIn, async (req, res) => {
+router.post('/googlelogin', async (req, res) => {
   try {
     function generateRandomCode(n) {
       let str = ''
@@ -109,7 +109,7 @@ router.post('/googlelogin', isNotLoggedIn, async (req, res) => {
     if(a) {
       console.log('로그인');
       res.cookie('user-cookie', `${user.email}`, cookieConfig);
-      console.log('Cookie Set:', user.email); // 로그 추가
+      console.log('Cookie Set:', user.email); // 로그 추가  
       return res.sendStatus(200);
     } else {
       models.User.create({
@@ -135,20 +135,50 @@ router.post('/googlelogin', isNotLoggedIn, async (req, res) => {
 router.post('/kakaologin', async (req, res) =>{
   try{
     // console.log("옴");
-    console.log(req.body.userData.id);
+    // console.log(req.body.userData.id);
     const body = req.body.userData;
-    const exUser = models.User.findOrCreate({where: { email : body.id },defaults:{email : body.id,
-      name : body.properties.nickname,
-      // 비밀번호에 해시문자를 넣어준다.
-      method : "kakao",}});
+    const exUser = models.User.findOrCreate({
+      where: { email : body.id },
+      defaults:{
+        email : body.id,
+        name : body.properties.nickname,
+        method : "kakao",
+    }});
     if(exUser) {
       res.cookie('user-cookie', `${body.id}`, cookieConfig);
-      res.send(200)
+      res.sendStatus(200);
     }
   }catch(error){
     console.log(err)
   }
 })
 
+// 네이버 로그인
+router.post('/naverlogin', async (req, res) => {
+  try {
+    console.log(req.body);
+    const user = req.body;
+    const exUser = await models.User.findOne({where : {email : user.email}})
+    if(exUser) {
+      res.cookie('user-cookie', `${user.email}`, cookieConfig);
+      return res.sendStatus(200);
+    } else {
+      models.User.create({
+        email : user.email,
+        name : user.name,
+        method: 'naver'
+      })
+        .then((result) => {
+          res.cookie('user-cookie', `${user.email}`, cookieConfig);
+          return res.sendStatus(200);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }
+  } catch(err) {
+    console.log(err);
+  }
+})
 
 module.exports = router;

@@ -9,16 +9,6 @@ var loginRedirectURI = encodeURI(process.env.NAVER_CALLBACK_URL);
 var callbackRedirectURI = encodeURI(process.env.NAVER_CALLBACK_URL);
 var api_url = "";
 
-router.get("/naverlogin", function (req, res) {
-  api_url = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=" + client_id + "&redirect_uri=" + loginRedirectURI + "&state=" + state;
-  
-  res.writeHead(200, { "Content-Type": "text/html;charset=utf-8" });
-  
-  res.end(
-    "<a href='" + api_url + "'><img height='50' src='http://static.nid.naver.com/oauth/small_g_in.PNG'/></a>"
-  );
-});
-
 router.get("/callback", function (req, res) {
   code = req.query.code;
   state = req.query.state;
@@ -75,9 +65,5 @@ router.get('/member', function (req, res) {
     }
   });
 });
-
-
-
-
 
 module.exports = router;
