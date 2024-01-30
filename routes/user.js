@@ -24,7 +24,7 @@ router.get('/data/:id', (req, res) => {
   }
 })
 
-
+// 매수 후 유저 잔고 최신화
 router.patch('/ask/:id', (req, res) => {
   try {
     models.User.update({
@@ -45,6 +45,7 @@ router.patch('/ask/:id', (req, res) => {
   }
 })
 
+// 매도 후 유저 잔고 최신화
 router.patch('/bid/:id', (req, res) => {
   try {
     models.User.update({
@@ -55,7 +56,7 @@ router.patch('/bid/:id', (req, res) => {
       }
     })
     .then((result) => {
-      res.send(200);
+      res.sendStatus(200);
     })
     .catch((err) => {
       console.log(err);

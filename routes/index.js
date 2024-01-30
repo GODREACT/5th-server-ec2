@@ -2,29 +2,16 @@ const express = require('express');
 const models = require('../models');
 const { Op } = require('sequelize');
 const router = express.Router();
+require('dotenv').config();
+
+var client_id = process.env.NAVER_CLIENT_ID;
+var client_secret = process.env.NAVER_CLIENT_SECRET;
+var state = process.env.NAVER_STATE;
+var loginRedirectURI = encodeURI(process.env.NAVER_CALLBACK_URL);
+var callbackRedirectURI = encodeURI(process.env.NAVER_CALLBACK_URL);
+var api_url = "";
 
 router.use('/images', express.static( 'images')); //이미지 접근 권한
-
-// 로그인 , 회원가입
-router.post('/login', async (req, res) => {
-  try {
-    const user = req.body;
-    await models.User.findOne({
-      where: {
-        email: user.email
-      }
-    })
-    .then(result => {
-      if(user.password == result.dataValues.password){
-        res.send('1');
-      } else {
-        res.send('2');
-      }
-    })
-  } catch(err) {
-    console.log(err);
-  }
-})
 
 router.post('/kakao', async (req, res, next) => {
   try {
@@ -88,6 +75,16 @@ router.get('/search/:keyword', async (req, res) => {
     console.error('Error fetching items:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+});
+
+router.get("/naverbutton", function (req, res) {
+  api_url = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=" + client_id + "&redirect_uri=" + loginRedirectURI + "&state=" + state;
+  
+  res.writeHead(200, { "Content-Type": "text/html;charset=utf-8" });
+  
+  res.end(
+    "<a href='" + api_url + "'><img height='50' src='http://static.nid.naver.com/oauth/small_g_in.PNG'/></a>"
+  );
 });
 
 module.exports = router;

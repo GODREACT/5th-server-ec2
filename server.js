@@ -78,9 +78,9 @@ app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/auth', authRouter);
-app.use('/api/test', testRouter);
 app.use('/html', htmlRouter);
 app.use('/htmlreview', htmlreviewRouter);
+app.use('/test', testRouter);
 
 app.use('/notice_detail', customernoticeRoutes);
 app.use('/bug', customerbugRoutes);
