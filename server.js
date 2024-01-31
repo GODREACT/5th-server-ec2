@@ -3,14 +3,8 @@ const cors =require('cors')
 const nunjucks = require('nunjucks');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-const cookieSession = require('cookie-session');
 const passport = require('passport');
 require("dotenv").config({ path: "./.env" });
-const path = require('path');
-const http = require('http');
-const jwt = require("jsonwebtoken");
-const {v4: uuidv4} = require('uuid');
-
 require("dotenv").config();
 
 const dotenv = require('dotenv');
@@ -32,10 +26,6 @@ const customernoticeRoutes= require("./routes/cutomer_notice");
 const customerbugRoutes = require("./routes/cutomer_bug");
 const stockdetailRoutes = require("./routes/stockdetail");
 
-const payload = {
-    access_key: "JkpxthVIGy0EtmtyU00axkI8MKVsyvoxdTJ4hDn4", 
-    nonce: uuidv4(),
-};
 
 // force 에 true가 들어가면 테이블을 재생성함
 sequelize.sync({ force: false })
@@ -54,12 +44,10 @@ nunjucks.configure('views', {
   watch: true,
 });
 
-app.use(express.static(path.join(__dirname, 'images')));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
-  origin: 'http://localhost:3000',
+  // origin: 'http://localhost:3000',
   origin: true,
   credentials: true
 }));
