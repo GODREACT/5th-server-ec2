@@ -9,7 +9,7 @@ var loginRedirectURI = encodeURI(process.env.NAVER_CALLBACK_URL);
 var callbackRedirectURI = encodeURI(process.env.NAVER_CALLBACK_URL);
 var api_url = "";
 
-router.get("/callback", function (req, res) {
+router.get("/callback", function (req, res) { 
   code = req.query.code;
   state = req.query.state;
   console.log("code, state: ", code, state);

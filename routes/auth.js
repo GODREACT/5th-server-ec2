@@ -15,6 +15,14 @@ const cookieConfig = {
   domain: 'localhost', // 도메인 설정 수정
 };
 
+function generateRandomCode(n) {
+  let str = ''
+  for (let i = 0; i < n; i++) {
+    str += Math.floor(Math.random() * 10)
+  }
+  return str
+}
+
 //가입부분
 // 사용자 미들웨어 isNotLoggedIn을 통과해야 async (req, res, next) => 미들웨어 실행
 router.post('/join', isNotLoggedIn, async (req, res, next) => {
@@ -91,13 +99,7 @@ router.delete('/logout', (req, res, next) => {
 // 구글로 로그인하기
 router.post('/googlelogin', async (req, res) => {
   try {
-    function generateRandomCode(n) {
-      let str = ''
-      for (let i = 0; i < n; i++) {
-        str += Math.floor(Math.random() * 10)
-      }
-      return str
-    }
+    
     // console.log(req.body.token);
     const user = jwt.decode(req.body.token);
     const a = await models.User.findOne({
@@ -143,6 +145,7 @@ router.post('/kakaologin', async (req, res) =>{
         email : body.id,
         name : body.properties.nickname,
         method : "kakao",
+        wallet_code : generateRandomCode(6),
     }});
     if(exUser) {
       res.cookie('user-cookie', `${body.id}`, cookieConfig);
@@ -166,7 +169,8 @@ router.post('/naverlogin', async (req, res) => {
       models.User.create({
         email : user.email,
         name : user.name,
-        method: 'naver'
+        method: 'naver',
+        wallet_code : generateRandomCode(6),
       })
         .then((result) => {
           res.cookie('user-cookie', `${user.email}`, cookieConfig);
