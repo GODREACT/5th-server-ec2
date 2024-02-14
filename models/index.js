@@ -19,10 +19,6 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 
 db.sequelize = sequelize;
 
-db.Customer_notice = Customer_notice;
-db.Customer_bug = Customer_bug;
-db.Stock_detail = Stock_detail;
-
 // 유저 관련
 db.User = User;
 db.Wallet = Wallet;

@@ -11,8 +11,10 @@ const router = express.Router();
 const cookieConfig = {
   maxAge: 3600000,
   path: '/',
+  httpOnly: false,
+  secure: false
   // signed: true,
-  domain: 'localhost', // 도메인 설정 수정
+  // domain: 'localhost', // 도메인 설정 수정
 };
 
 function generateRandomCode(n) {
@@ -71,6 +73,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
       return res.send('2');
     }
     return req.login(user, (loginError) => {
+      
       if (loginError) {
         console.error(loginError);
         return next(loginError);

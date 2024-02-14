@@ -2,11 +2,12 @@ const express = require('express');
 const models = require('../models');
 const router = express.Router();
 const multer = require('multer');
+const API_URL = "https://www.godreact.com/app1/api";
 
 // 이미지 경로 설정
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, './images')
+    callback(null, 'images/')
   },
   filename: (req, file, callback) => {
     callback(null, file.originalname)
@@ -18,14 +19,14 @@ const upload = multer({storage: storage});
 // 이미지 받고 경로 보내주기
 router.post('/images', upload.single('img_url'), (req,res) => {
   console.log(req.file);
-  const path = 'http://localhost:3001/images/' + req.file.originalname;
+  const path = API_URL + req.file.originalname;
   res.status(200).send({'path' : path});
 });
 
 // 이미지 여러개 받을때
 
 
-router.use('/images', express.static('images'));
+router.use('/app1/api/images', express.static('images'));
 
 // 예시
 router.get('/', async(req, res) => {

@@ -1,12 +1,13 @@
 const express = require('express');
 const models = require('../models');
-const axios = require('axios');
 const router = express.Router();
 const multer = require('multer');
 const Customer_bug = models.Customer_bug;
+const API_URL = "https://www.godreact.com/app1/api";
+
 const storage = multer.diskStorage({
   destination:(req, file, callback)=>{
-    callback(null,'./images/');
+    callback(null,'images/');
   },
   filename:(req, file,callback)=>{
     callback(null, file.originalname);
@@ -21,7 +22,7 @@ router.post('/', upload.single('imageFile'), (req, res) => {
     console.log("이미지파일스", req.file);  
     console.log("서버이미지받음");
 
-    const path = 'http://localhost:3001/images/' + req.file.originalname;
+    const path = API_URL + req.file.originalname;
 
     res.status(200).send({ image_path: path });
     console.log("path경로:", path);

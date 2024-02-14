@@ -63,16 +63,16 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', indexRouter);
-app.use('/user', userRouter);
-app.use('/auth', authRouter);
-app.use('/html', htmlRouter);
-app.use('/htmlreview', htmlreviewRouter);
-app.use('/test', testRouter);
+app.use('/app1/api/', indexRouter);
+app.use('/app1/api/user', userRouter);
+app.use('/app1/api/auth', authRouter);
+app.use('/app1/api/html', htmlRouter);
+app.use('/app1/api/htmlreview', htmlreviewRouter);
+app.use('/app1/api/test', testRouter);
 
-app.use('/notice_detail', customernoticeRoutes);
-app.use('/bug', customerbugRoutes);
-app.use('/stock_detail', stockdetailRoutes);
+app.use('/app1/api/notice_detail', customernoticeRoutes);
+app.use('/app1/api/bug', customerbugRoutes);
+app.use('/app1/api/stock_detail', stockdetailRoutes);
 
 
 app.listen(app.get('port'), () => {
