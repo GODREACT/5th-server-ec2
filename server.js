@@ -36,7 +36,7 @@ sequelize.sync({ force: false })
     console.error(err);
   });
 
-app.set('port', process.env.PORT || 3001);
+app.set('port', process.env.PORT || 3003);
 app.set('view engine', 'html');
 // 넌적스 초기화
 nunjucks.configure('views', {
