@@ -32,7 +32,7 @@ class Customer_bug extends Sequelize.Model {
         sequelize,
         timestamps: false, // createdAt만 활성화, updatedAt 비활성화
         underscored: false,
-        modelName: 'Bug',
+        modelName: 'Customer_bug',
         tableName: 'bugTable',
         paranoid: false,
         charset: 'utf8',
