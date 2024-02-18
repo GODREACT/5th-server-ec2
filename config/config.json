@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "root",
-    "password": "lbrskybule5",
+    "username": "godreact",
+    "password": "1234",
     "database": "fifth-project",
-    "host": "127.0.0.1",
+    "host": "18.213.22.54",
     "dialect": "mysql"
   }
 }
