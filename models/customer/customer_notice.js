@@ -15,9 +15,10 @@ class Customer_notice extends Sequelize.Model{
       },
       regdt: {
         allowNull: true,
-        type: Sequelize.DATEONLY,
-        defaultValue: Sequelize.literal('CURRENT_DATE'),
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('NOW'),
       },
+
       views: {
         type: Sequelize.INTEGER,
         allowNull: true,
@@ -36,7 +37,7 @@ class Customer_notice extends Sequelize.Model{
       sequelize,
       timestamps: false,
       underscored: false,
-      modelName: 'notice',
+      modelName: 'Customer_notice',
       tableName: 'noticeTable',
       paranoid: false,
       charset: 'utf8',
